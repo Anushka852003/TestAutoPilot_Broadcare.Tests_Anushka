@@ -1,0 +1,45 @@
+{
+    "templateName": "Add Note",
+    "jsonFileName": "patient-add-note",
+    "Fields": [
+        {
+            "name": "patientId",
+            "label": "Patient ID",
+            "type": "text",
+            "required": true
+        },
+        {
+            "name": "reason",
+            "label": "Reason for note",
+            "type": "dropdown",
+            "optionsSource": "Lookups/LkpReasonForNote.json"
+        },
+        {
+            "name": "assignActionTo",
+            "label": "Assign action to",
+            "type": "dropdown",
+            "options": [
+                "digambar.jalgaonkar@rheal.com"
+            ]
+        },
+        {
+            "name": "actionDueDate",
+            "label": "Action due date",
+            "type": "date"
+        },
+        {
+            "name": "note",
+            "label": "Note",
+            "type": "textarea"
+        },
+        {
+            "name": "failedValidation",
+            "label": "Failed Validation",
+            "type": "dropdown",
+            "options": [
+                "Form invalid",
+                "Note is required"
+            ]
+        }
+    ]
+}
