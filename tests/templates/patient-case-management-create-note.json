@@ -1,6 +1,6 @@
 {
-    "templateName": "Add Note",
-    "jsonFileName": "patient-add-note",
+    "templateName": "Patient - Case-Management - Note",
+    "jsonFileName": "patient-case-management-create-note",
     "Fields": [
         {
             "name": "patientId",

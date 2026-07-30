@@ -9,6 +9,9 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
-
+.playwright-mcp
+.playwright/
 
 tests/data/*.json
+test-results.json
+test-steps.json
