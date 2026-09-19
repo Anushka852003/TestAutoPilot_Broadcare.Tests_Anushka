@@ -1,0 +1,51 @@
+{
+  "templateName": "Administration - Create New User",
+  "jsonFileName": "create-new-user",
+  "Fields": [
+    {
+      "name": "firstName",
+      "label": "First name",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "lastName",
+      "label": "Last name",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "password",
+      "label": "Password",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "confirmPassword",
+      "label": "Confirm password",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "TestResult",
+      "label": "Test result",
+      "type": "dropdown",
+      "options": [
+        "Success",
+        "Failed"
+      ],
+      "required": true
+    },
+    {
+      "name": "FailedValidation",
+      "label": "Failed validation",
+      "type": "text"
+    }
+  ]
+}

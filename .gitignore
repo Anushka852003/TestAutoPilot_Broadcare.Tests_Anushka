@@ -13,5 +13,7 @@ node_modules/
 .playwright/
 
 tests/data/*.json
+!tests/data/broadcare-authentication.json
+!tests/data/reset-password.json
 test-results.json
 test-steps.json

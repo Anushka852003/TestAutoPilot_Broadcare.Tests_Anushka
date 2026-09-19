@@ -1,0 +1,93 @@
+[
+  {
+    "id": 1,
+    "testCaseName": "Valid credentials authenticate successfully",
+    "email": "{{env.EMAIL}}",
+    "password": "{{env.PASSWORD}}",
+    "scenario": "Valid credentials",
+    "TestResult": "Success",
+    "FailedValidation": ""
+  },
+  {
+    "id": 2,
+    "testCaseName": "Email address is required",
+    "email": "",
+    "password": "{{env.PASSWORD}}",
+    "scenario": "Blank email",
+    "TestResult": "Failed",
+    "FailedValidation": "Please enter an email address"
+  },
+  {
+    "id": 3,
+    "testCaseName": "Password is required",
+    "email": "{{env.EMAIL}}",
+    "password": "",
+    "scenario": "Blank password",
+    "TestResult": "Failed",
+    "FailedValidation": "Password is required"
+  },
+  {
+    "id": 4,
+    "testCaseName": "Invalid email format is rejected",
+    "email": "not-an-email",
+    "password": "{{env.PASSWORD}}",
+    "scenario": "Invalid email format",
+    "TestResult": "Failed",
+    "FailedValidation": "Wrong email or password"
+  },
+  {
+    "id": 5,
+    "testCaseName": "Invalid password is rejected",
+    "email": "{{env.EMAIL}}",
+    "password": "invalid-password-for-test",
+    "scenario": "Invalid password",
+    "TestResult": "Failed",
+    "FailedValidation": "Wrong email or password"
+  },
+  {
+    "id": 6,
+    "testCaseName": "Invalid email is rejected",
+    "email": "unknown.user@example.com",
+    "password": "{{env.PASSWORD}}",
+    "scenario": "Invalid email",
+    "TestResult": "Failed",
+    "FailedValidation": "Wrong email or password"
+  },
+  {
+    "id": 7,
+    "testCaseName": "Blocked account displays lockout message",
+    "email": "{{env.EMAIL}}",
+    "password": "{{env.PASSWORD}}",
+    "scenario": "Account blocked",
+    "enabled": false,
+    "TestResult": "Failed",
+    "FailedValidation": "Your account has been blocked after multiple consecutive login attempts"
+  },
+  {
+    "id": 8,
+    "testCaseName": "Test case 01 by adding data from app",
+    "email": "Anushka.Kuchakar@rheal.com",
+    "password": "Anushka@0805",
+    "scenario": "Valid credentials",
+    "TestResult": "Success",
+    "FailedValidation": ""
+  },
+  {
+    "id": 9,
+    "testCaseName": "Test case 02",
+    "email": "",
+    "password": "Anushka@0805",
+    "scenario": "Blank email",
+    "TestResult": "Failed",
+    "FailedValidation": "wrong email or password"
+  },
+  {
+    "id": 10,
+    "testCaseName": "Test case 03",
+    "email": "",
+    "password": "Anushka@0805",
+    "scenario": "Blank email",
+    "TestResult": "Failed",
+    "FailedValidation": "Please enter an email address."
+  }
+]

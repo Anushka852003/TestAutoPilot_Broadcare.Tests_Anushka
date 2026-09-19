@@ -1,0 +1,39 @@
+{
+  "templateName": "BroadCare Authentication",
+  "jsonFileName": "broadcare-authentication",
+  "Fields": [
+    {
+      "name": "testCaseName",
+      "label": "Test Case Name",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "email",
+      "label": "Email address",
+      "type": "text",
+      "required": false
+    },
+    {
+      "name": "password",
+      "label": "Password",
+      "type": "text",
+      "required": false
+    },
+    {
+      "name": "scenario",
+      "label": "Authentication scenario",
+      "type": "dropdown",
+      "options": [
+        "Valid credentials",
+        "Blank email",
+        "Blank password",
+        "Invalid email format",
+        "Invalid password",
+        "Invalid email",
+        "Account blocked"
+      ],
+      "required": true
+    }
+  ]
+}
