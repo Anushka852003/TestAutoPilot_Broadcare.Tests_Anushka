@@ -1,0 +1,40 @@
+{
+    "General": [
+        "Demographic",
+        "Diagnosis",
+        "Residence",
+        "Next Review",
+        "NHSE Stage",
+        "Local Stage",
+        "Patient Status",
+        "Provider"
+    ],
+    "Contacts": [
+        "Interested Parties",
+        "Responsible Commissioners",
+        "Practices",
+        "Dist / Assessing Nurses",
+        "Case Managers",
+        "Social Workers"
+    ],
+    "Events": [
+        "Appointment",
+        "Decision",
+        "Appeal",
+        "Initial Assessment",
+        "PHB",
+        "PUPOC",
+        "Referral",
+        "Review",
+        "DoLS",
+        "COPDOL"
+    ],
+    "Packages": [],
+    "Invoice": [],
+    "Case Management": [
+        "Audit",
+        "Reason For Entry",
+        "Hospital",
+        "Alert Type"
+    ]
+}

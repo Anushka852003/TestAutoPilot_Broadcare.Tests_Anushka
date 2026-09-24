@@ -1,0 +1,35 @@
+{
+    "templateName": "Report Builder",
+    "jsonFileName": "report-builder",
+    "Fields": [
+        {
+            "name": "patientPage",
+            "label": "Patient page",
+            "type": "dropdown",
+            "optionsSource": "Lookups/LkpPatients.json",
+            "required": true
+        },
+        {
+            "name": "patientSection",
+            "label": "Patient section",
+            "type": "dropdown",
+            "optionsSource": "Lookups/LkpSecondChoice.json",
+            "dependsOn": "patientPage",
+            "required": true
+        },
+        {
+            "name": "reportAttributes",
+            "label": "Report attributes",
+            "type": "checkbox",
+            "optionsSource": "Lookups/LkpThirdChoice.json",
+            "dependsOn": "patientSection",
+            "required": true
+        },
+        {
+            "name": "reportName",
+            "label": "Report Name",
+            "type": "text",
+            "required": true
+        }
+    ]
+}

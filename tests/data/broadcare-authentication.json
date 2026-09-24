@@ -89,5 +89,14 @@
     "scenario": "Blank email",
     "TestResult": "Failed",
     "FailedValidation": "Please enter an email address."
+  },
+  {
+    "id": 11,
+    "testCaseName": "Valid credentials authenticate successfully",
+    "email": "Anushka.Kuchakar@rheal.com",
+    "password": "Atharv@1234",
+    "scenario": "Valid credentials",
+    "TestResult": "Success",
+    "FailedValidation": ""
   }
 ]

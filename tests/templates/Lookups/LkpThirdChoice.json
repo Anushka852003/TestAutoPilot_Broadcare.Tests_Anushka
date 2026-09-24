@@ -1,0 +1,40 @@
+{
+    "General": {
+        "Demographic": ["Patient ID", "Forename", "Surname", "DOB", "Sec Lvl", "Tel", "Mob", "Email", "Sign Lang", "Preferred Name", "Disability", "Gender", "Record Owner", "Care Type", "Care Type 2", "SS Ref", "First Language", "Marital Status", "Ethnic Origin", "Interpreter", "Religion", "NHS Number", "OOA", "Sexual Orientation", "Classification", "Veteran", "Client Group", "Consent", "Alert", "Local Authority", "EH&C", "Previous Ref", "Impairment"],
+        "Diagnosis": ["Diagnosis", "Diagnosis From", "Primary Diagnosis"],
+        "Residence": ["Residence", "Current Residence Address", "Postcode", "Area", "Residence From", "Residence To"],
+        "Next Review": ["Next Review", "Which Review"],
+        "NHSE Stage": ["NHSE Stage", "NHSE Stage From Date", "NHSE Stage To Date"],
+        "Local Stage": ["Local Stage", "Local Stage From Date", "Local Stage To Date"],
+        "Patient Status": ["Patient Status", "Status Reason", "Date Case Closed", "Status From", "Status To", "Deceased Date"],
+        "Provider": ["Provider Name", "Provider Address"]
+    },
+    "Contacts": {
+        "Interested Parties": ["Next of Kin", "Deceased", "Tel Number", "Address", "Relationship"],
+        "Responsible Commissioners": ["Responsible Commissioner Name", "Responsible Commissioner Organisation Code", "Responsible Commissioner From", "Responsible Commissioner To"],
+        "Practices": ["Practice Name", "Practice From", "Practice To"],
+        "Dist / Assessing Nurses": ["Dist / Assessing Nurse Name", "Dist / Assessing Nurse From", "Dist / Assessing Nurse To"],
+        "Case Managers": ["Case Manager Name", "Case Manager From", "Case Manager To"],
+        "Social Workers": ["Social Worker Name", "Social Worker From", "Social Worker To"]
+    },
+    "Events": {
+        "Appointment": ["Appointment ID", "Appointment Date", "Appointment Type", "Appointment Outcome Date", "Appointment Outcome", "Appointment Reason", "Appointment Address", "Appointment Time", "Appointment Assessing Nurse", "Social Worker", "Entered By (Appointment)", "Entered Date (Appointment)", "Linked Events"],
+        "Decision": ["Decision ID", "Decision Method", "Decision Case Type", "Linked Referral ID", "Linked Referral Date", "Decision Date of Assessment", "Decision Panel Date", "Decision Panel Member", "Decision Date", "Panel Decision", "Decision Date Letter Sent", "Entered By (Decision)", "Decision Entry Date", "Entered Date (Decision)", "DST Location", "DST Completed By", "MDT Recommendation", "Eligibility Date", "[DST] Behaviour", "[DST] Cognition", "[DST] PsychNeeds", "[DST] Communication", "[DST] Mobility", "[DST] Nutrition", "[DST] Continence", "[DST] Skin", "[DST] Breathing", "[DST] Drug Therapies", "[DST] Alt Consciousness", "[DST] Other Care Needs", "Decision Panel Member Role", "Decision Letter Sent"],
+        "Appeal": ["Appeal ID", "Appeal Type", "Appeal Received Date", "Appeal Review Date", "Start Date of Claim", "End Date of Claim", "Informal Resolution Meeting Date", "Date of Panel", "Letter Sent Date", "Appeal Current Status", "Appeal Discounted Before Assessment", "Appeal Outcome", "Stage Resolved", "Eligibility Period Start Date", "Eligibility Period End Date", "Entered By (Appeal)", "Entered Date (Appeal)"],
+        "Initial Assessment": ["Initial Assessment ID", "Initial Assessment Allocated Date", "Initial Assessment Allocated Nurse", "Initial Assessment Allocated Case Manager", "Initial Assessment Carried Out Date", "Initial Assessment Carried Out Nurse", "Initial Assessment Carried Out Case Manager", "Initial Assessment Social Worker", "Initial Assessment Consent", "Initial Assessment Outcome", "Entered By (Initial Assessment)", "Entered Date (Initial Assessment)"],
+        "PHB": ["PHB ID", "PHB Interest", "PHB Open Date", "PHB Closed Date", "PHB Review Date", "PHB Closed Reason", "PHB Care Plan Writer", "Entered By (PHB)", "Entered Date (PHB)"],
+        "PUPOC": ["PUPOC ID", "PUPOC Period", "PUPOC Application Received Date", "PUPOC Start Date of Claim", "PUPOC End Date of Claim", "PUPOC Allocated Nurse", "PUPOC Current Status", "PUPOC Discounted Before Assessment", "PUPOC Decision Outcome", "PUPOC Decision By", "PUPOC Decision Date", "Start Date of Payment Period", "End Date of Payment Period", "Entered By (Pupoc)", "Entered Date (Pupoc)"],
+        "Referral": ["Referral ID", "Referral Patient Location", "Referral Type", "Referral Date", "Referral Source", "Referral Date Application Received", "Referral Title", "Referral Assessor Group", "Referral Outcome", "Referral Outcome Date", "Referral Next Action", "Check List Sent Back Date", "Check List Screened Out", "Entered By (Referral)", "Entered Date (Referral)", "Document Date", "Document Outcome", "Discounted Before Assessment", "Discounted Before Assessment Date", "FNC Eligibility Date", "Joint Funded Eligibility Date", "Organisation", "Reviewed By", "Record Delay Start Date", "Record Delay End Date", "Record Delay Details", "Record Delay Days Lost", "Referral Outcome Letter Sent"],
+        "Review": ["Review ID", "Review Allocated Nurse", "Review Allocated Case Manager", "Review Allocated Date", "Review Carried Out Nurse", "Review Carried Out Case Manager", "Review Carried Out Date", "Review - Which Review", "Review Social Worker", "Review Type", "Review Consent", "Review Outcome", "Entered By (Review)", "Entered Date (Review)", "Review Period", "Linked Service Request (Review)"],
+        "DoLS": ["DoLS ID", "Date notified of DoLS", "Local Authority", "DoLS Outcome", "Date DoLS Granted", "Duration of DoLS", "Date of DoLS Expiration", "DoLS Closed Date", "DoLS Closed Reason", "Application Status", "Entered By (DoLS)", "Entered Date (DoLS)"],
+        "COPDOL": ["COPDOL ID", "COPDOL Application Required", "COPDOL Application Check Date", "Capacity to Consent to Care", "Date of Capacity Assessment", "Priority", "Date of COPDOL11 Application", "Date of Care Plan Review", "Date Diagnosis Letter Received", "Date of COP3 Assessment", "Date of COP24 Witness Statement", "Date of Rep 1.2 Statement", "Date of Best Interests Document Received", "Date Application Signed Off", "Application Signed Off By", "Referred to Solicitors/Legal Team", "Name of Solicitors/Legal Team", "Date Sent to Solicitors/Legal team", "Date Sent to Court of Protection", "Court of Protection Decision", "Date of Decision", "Duration of COPDOL", "Date of COPDOL Expiration", "Date of COPDOL Renewal Reminder", "COPDOL Closed Date", "COPDOL Closed Reason", "Application Withdrawn Date", "Application Withdrawn Reason", "Application Status", "Record Delay Start Date (COPDOL)", "Record Delay End Date (COPDOL)", "Record Delay Details (COPDOL)", "Record Delay Days Lost (COPDOL)", "Entered By (COPDOL)", "Entered Date (COPDOL)"]
+    },
+    "Packages": {},
+    "Invoice": {},
+    "Case Management": {
+        "Audit": ["Case Management Item ID", "Case Management Entry User", "Case Management Entry Date", "Case Management Completed By", "Case Management Completed Date"],
+        "Reason For Entry": ["Reason For Entry - Case Note", "Reason For Entry - Appointments", "Reason For Entry - Decisions", "Reason For Entry - Disputes", "Reason For Entry - Initial Assessments", "Reason For Entry - PHBs", "Reason For Entry - Pupocs", "Reason For Entry - Referrals", "Reason For Entry - Reviews", "Reason For Entry - DoLS", "Reason For Entry - COPDOL"],
+        "Hospital": ["Hospital Name", "Hospital Admission From", "Hospital Admission To"],
+        "Alert Type": ["Accessible Information Need", "Alert From", "Alert To"]
+    }
+}

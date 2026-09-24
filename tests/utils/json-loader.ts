@@ -21,3 +21,8 @@ export function loadJsonArray<T>(filePath: string, baseDir: string): T[] {
     throw error;
   }
 }
+
+export function loadJsonObject<T>(filePath: string, baseDir: string): T {
+  const resolvedPath = path.resolve(baseDir, filePath);
+  return JSON.parse(fs.readFileSync(resolvedPath, 'utf-8')) as T;
+}

@@ -8,14 +8,47 @@ const PASSWORD = process.env.PASSWORD!;
 
 /** Logs in through the BroadCare login form. */
 export async function login(page: Page, baseURL: string, email: string, password: string): Promise<void> {
-  await page.goto(`${baseURL}/login`);
-  await page.getByRole('button', { name: 'Go to BroadCare login' }).click();
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    await page.goto(`${baseURL}/login`);
+    await expect(page.getByRole('button', { name: 'Go to BroadCare login' })).toBeVisible();
+    await page.getByRole('button', { name: 'Go to BroadCare login' }).click();
+
+    try {
+      await page.waitForURL(/https:\/\/chs-dev\.uk\.auth0\.com\/u\/login\?state=.+/, {
+        timeout: 30_000,
+      });
+      break;
+    } catch (error) {
+      if (attempt === 3) {
+        throw error;
+      }
+    }
+  }
+
+  const emailField = page.getByRole('textbox', { name: 'Email address' });
+  const passwordField = page.getByRole('textbox', { name: 'Password' });
+  await expect(emailField).toBeVisible({ timeout: 30_000 });
+  await emailField.fill(email);
+  await passwordField.fill(password);
+
+  await Promise.all([
+    page.waitForURL(
+      new RegExp(
+        `${baseURL.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/(?:callback#.+)?`
+      ),
+      { timeout: 120_000 }
+    ),
+    page.getByRole('button', { name: 'Continue' }).click(),
+  ]);
+
+  await expect(page).toHaveURL(/\/callback(?:#|$)/);
+  expect(new URL(page.url()).hash).toMatch(/access_token=[^&]+/);
   await page.waitForLoadState('networkidle');
-  await page.getByLabel('Email address').fill(email);
-  await page.locator('#password').fill(password);
-  await page.getByRole('button', { name: 'Continue' }).click();
+
+  const broadcareRootUrl = new URL('/', baseURL).toString();
+  await page.goto(broadcareRootUrl, { waitUntil: 'domcontentloaded' });
   await page.waitForLoadState('networkidle');
-  await expect(page).not.toHaveURL(/login/i);
+  await expect(page.getByRole('button', { name: 'Go to BroadCare login' })).not.toBeVisible({ timeout: 30_000 });
 }
 
 const AUTH_DIR = path.resolve(__dirname, '..', '..', '.auth');
@@ -78,7 +111,7 @@ export const test = base.extend<{}, { workerStorageState: string }>({
       const fileName = await ensureLoggedIn(browser);
       await use(fileName);
     },
-    { scope: 'worker' },
+    { scope: 'worker', timeout: 180_000 },
   ],
 });
 

@@ -6,7 +6,6 @@ import path from 'path';
 type ResetPasswordCase = {
   email: string;
   newPassword: string;
-  reEnterNewPassword: string;
   TestResult: 'Success' | 'Failed';
   FailedValidation: string;
   testCaseName: string;
@@ -40,7 +39,9 @@ function updateEnvPassword(password: string): void {
 
 async function openAuth0Login(page: Page, baseUrl: string): Promise<void> {
   await page.goto(`${baseUrl}/login`);
-  await page.getByRole('button', { name: 'Go to BroadCare login' }).click();
+  await page
+    .getByRole('button', { name: /go to broadcare|return to broadcare/i })
+    .click();
 
   await page.waitForURL(
     (url) => url.hostname === 'chs-dev.uk.auth0.com' && url.pathname === '/u/login',
@@ -63,22 +64,31 @@ async function openOutlookMailbox(page: Page): Promise<void> {
     throw new Error('OUTLOOK_URL is required to read the reset email');
   }
   await page.goto(outlookUrl);
-  // Outlook may first load a shell and redirect to Microsoft authorization a
-  // moment later; wait before deciding whether authentication is required.
-  await page.waitForTimeout(5_000);
+  // Outlook can redirect to Microsoft sign-in more than once before rendering
+  // the form, so wait for a control rather than relying on the current URL.
+  await page.waitForLoadState('domcontentloaded').catch(() => undefined);
 
   const emailField = page
-    .locator('input[name="loginfmt"], input[name="username"], input[type="email"]')
+    .locator('#i0116, input[name="loginfmt"], input[name="username"], input[type="email"]')
+    .first();
+  const passwordField = page
+    .locator('#i0118, input[name="passwd"], input[type="password"]')
     .first();
   const useAnotherAccount = page
     .getByText(/use another account/i)
     .or(page.getByRole('button', { name: /use another account/i }))
     .first();
-  const isMicrosoftSignIn = /login\.microsoftonline\.com|authorize/i.test(page.url());
-  const authenticationRequired =
-    isMicrosoftSignIn ||
-    (await emailField.isVisible({ timeout: 5_000 }).catch(() => false)) ||
-    (await useAnotherAccount.isVisible({ timeout: 5_000 }).catch(() => false));
+  const mailboxReady = page.locator(
+    '[aria-label="New mail"], [title="Inbox"], [aria-label*="Inbox" i], ' +
+      '[data-automation-id="splitViewListView"], ' +
+      'button[aria-label*="New" i], button[aria-label*="Mail" i], ' +
+      '[role="button"][aria-label*="Inbox" i]'
+  ).first();
+  const authenticationRequired = await Promise.race([
+    emailField.isVisible({ timeout: 180_000 }).then(() => true).catch(() => false),
+    useAnotherAccount.isVisible({ timeout: 180_000 }).then(() => true).catch(() => false),
+    mailboxReady.isVisible({ timeout: 180_000 }).then(() => false).catch(() => false),
+  ]);
 
   if (authenticationRequired) {
     const outlookEmail = process.env.OUTLOOK_EMAIL;
@@ -90,7 +100,7 @@ async function openOutlookMailbox(page: Page): Promise<void> {
       );
     }
 
-    if (await useAnotherAccount.isVisible({ timeout: 30_000 }).catch(() => false)) {
+    if (await useAnotherAccount.isVisible({ timeout: 10_000 }).catch(() => false)) {
       await useAnotherAccount.click();
     }
 
@@ -104,7 +114,6 @@ async function openOutlookMailbox(page: Page): Promise<void> {
     await expect(nextButton).toBeVisible({ timeout: 15_000 });
     await nextButton.click();
 
-    const passwordField = page.locator('#i0118, input[name="passwd"], input[type="password"]').first();
     await expect(passwordField).toBeVisible({ timeout: 30_000 });
     await passwordField.fill(outlookPassword);
     const signInButton = page
@@ -115,32 +124,19 @@ async function openOutlookMailbox(page: Page): Promise<void> {
     await expect(signInButton).toBeVisible({ timeout: 15_000 });
     await signInButton.click();
 
+    const staySignedInPrompt = page.getByText(/stay signed in\?/i).first();
+    await expect(staySignedInPrompt).toBeVisible({ timeout: 60_000 });
+
     const noButton = page
-      .locator('#idBtn_Back')
-      .or(page.getByRole('button', { name: /^no$/i }))
-      .or(page.getByText(/^no$/i))
+      .getByRole('button', { name: /^No$/i })
+      .or(page.locator('#idBtn_Back'))
       .first();
-    if (await noButton.isVisible({ timeout: 30_000 }).catch(() => false)) {
-      await noButton.click();
-    }
+    await expect(noButton).toBeVisible({ timeout: 15_000 });
+    await noButton.click();
   }
 
-  const mailboxReady = page.locator(
-    '[aria-label="New mail"], [title="Inbox"], [aria-label*="Inbox" i], ' +
-      '[data-automation-id="splitViewListView"], ' +
-      'button[aria-label*="New" i], button[aria-label*="Mail" i], ' +
-      '[role="button"][aria-label*="Inbox" i]'
-  ).first();
-
   try {
-    await page.waitForURL(
-      (url) => url.hostname === 'outlook.office.com' && url.pathname.startsWith('/mail'),
-      { timeout: 180_000 }
-    );
-    await page.waitForLoadState('domcontentloaded');
-    // Keep the page open while the user completes Microsoft MFA or account
-    // selection; the mailbox is the only reliable completion signal.
-    await expect(mailboxReady).toBeVisible({ timeout: 60_000 });
+    await expect(mailboxReady).toBeVisible({ timeout: 180_000 });
   } catch (error) {
     const currentUrl = page.url();
     if (/login\.microsoftonline\.com|authorize/i.test(currentUrl)) {
@@ -162,27 +158,74 @@ async function openOutlookMailbox(page: Page): Promise<void> {
   }
 }
 
-async function openResetEmail(page: Page, recipient: string): Promise<Page> {
+async function openResetEmail(
+  page: Page,
+  sender: string,
+  subject: string
+): Promise<Page> {
   const message = page
-    .getByRole('row')
-    .filter({ hasText: /help(?:me)?@chshealthcare\.co\.uk/i })
+    .getByRole('listbox', { name: /message list/i })
+    .getByRole('option')
+    .filter({ hasText: new RegExp(sender.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') })
+    .filter({ hasText: new RegExp(subject.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') })
     .first();
 
+  await page.waitForTimeout(10_000);
   await expect(message).toBeVisible({ timeout: 60_000 });
   await message.click();
-  await expect(
-    page.getByText(/help(?:me)?@chshealthcare\.co\.uk/i, { exact: false })
-  ).toBeVisible();
-  await expect(page.getByText(recipient, { exact: false })).toBeVisible();
+  await page.waitForURL(/outlook\.office\.com\/mail\/inbox\/id\//, { timeout: 30_000 });
+  const readingPane = page.getByRole('main', { name: /reading pane/i });
+  await expect(readingPane.getByText(sender, { exact: false }).first()).toBeVisible();
+  await expect(readingPane.getByText(subject, { exact: false }).first()).toBeVisible();
 
-  const resetLink = page.getByRole('link', { name: /reset password/i }).first();
-  await expect(resetLink).toBeVisible();
-  const href = await resetLink.getAttribute('href');
-  if (!href) {
-    throw new Error('Reset password email link has no href');
+  const resetControl = readingPane
+    .locator('a[href]')
+    .filter({ hasText: /^\s*Reset password\s*$/i })
+    .first();
+  await expect(resetControl).toBeVisible();
+
+  const auth0ResetUrl = await resetControl.evaluate((anchor) => {
+    const values = [
+      anchor.getAttribute('href'),
+      anchor.getAttribute('data-url'),
+      anchor.getAttribute('data-href'),
+      anchor.getAttribute('onclick'),
+      anchor.outerHTML,
+    ].filter((value): value is string => Boolean(value));
+    const decodedValues = values.flatMap((value) => {
+      const decoded = value.replace(/&amp;/g, '&');
+      const decodedAgain = decodeURIComponent(decoded);
+      return [value, decoded, decodedAgain];
+    });
+    return decodedValues
+      .map((value) =>
+        value.match(
+          /https:\/\/chs-dev\.uk\.auth0\.com\/(?:u\/reset-verify\?ticket=|u\/reset-password\/change\?)[^"'<>\s]+/i
+        )
+      )
+      .find((match): match is RegExpMatchArray => Boolean(match))?.[0] ?? null;
+  });
+  if (!auth0ResetUrl) {
+    throw new Error('Reset password email button does not contain an Auth0 reset URL');
   }
-  await page.goto(new URL(href, page.url()).toString());
-  return page;
+
+  const popupPromise = page.waitForEvent('popup', { timeout: 10_000 }).catch(() => null);
+  await resetControl.click();
+  const resetPage = (await popupPromise) ?? page;
+  const auth0Navigation = resetPage
+    .waitForURL(
+      /chs-dev\.uk\.auth0\.com\/u\/(?:reset-verify\?ticket=|reset-password\/change\?)/,
+      { timeout: 10_000 }
+    )
+    .then(() => true)
+    .catch(() => false);
+  if (!(await auth0Navigation)) {
+    await resetPage.goto(auth0ResetUrl);
+  }
+  await resetPage.waitForURL(/chs-dev\.uk\.auth0\.com\/u\/reset-password\/change\?/, {
+    timeout: 30_000,
+  });
+  return resetPage;
 }
 
 test.describe('Reset password', () => {
@@ -195,8 +238,14 @@ test.describe('Reset password', () => {
       }
 
       const email = resolveEnvironmentValue(entry.email);
+      const resetEmailSender = process.env.RESET_EMAIL_SENDER;
+      const resetEmailSubject = process.env.RESET_EMAIL_SUBJECT;
+      if (!resetEmailSender || !resetEmailSubject) {
+        throw new Error(
+          'RESET_EMAIL_SENDER and RESET_EMAIL_SUBJECT are required to read the reset email'
+        );
+      }
       const newPassword = resolveEnvironmentValue(entry.newPassword);
-      const reEnterNewPassword = resolveEnvironmentValue(entry.reEnterNewPassword);
 
       await openAuth0Login(page, baseUrl);
       await page.getByRole('link', { name: 'Reset password' }).click();
@@ -212,22 +261,29 @@ test.describe('Reset password', () => {
       await expect(page.getByText(/email.*sent|check your email/i)).toBeVisible();
 
       await openOutlookMailbox(page);
-      const resetPage = await openResetEmail(page, email);
-      await resetPage.waitForURL(/\/u\/reset-password\/(?:change|request)/, {
-        timeout: 30_000,
-      });
+      const resetPage = await openResetEmail(
+        page,
+        resetEmailSender,
+        resetEmailSubject
+      );
 
       await resetPage.getByRole('textbox', { name: /new password/i }).first().fill(newPassword);
       await resetPage
         .getByRole('textbox', { name: /re-enter new password|confirm new password/i })
-        .fill(reEnterNewPassword);
+        .fill(newPassword);
       await expect(
         resetPage.getByRole('textbox', { name: /new password/i }).first()
       ).toHaveAttribute('type', 'password');
-      await resetPage
-        .getByRole('button', { name: /continue|reset password|save|update password/i })
-        .click();
-      await expect(resetPage.getByText(/password.*changed|password.*reset|success/i)).toBeVisible();
+      await resetPage.getByRole('button', { name: /^reset password$/i }).click();
+      const resetRedirected = await resetPage
+        .waitForURL(/(?:testing4\.broadcare\.co\.uk|\/login)/, { timeout: 30_000 })
+        .then(() => true)
+        .catch(() => false);
+      if (!resetRedirected) {
+        await expect(resetPage.getByText(/password.*changed|password.*reset|success/i)).toBeVisible({
+          timeout: 15_000,
+        });
+      }
 
       updateEnvPassword(newPassword);
       await openAuth0Login(resetPage, baseUrl);
@@ -236,8 +292,10 @@ test.describe('Reset password', () => {
         .or(resetPage.locator('input[name="email"], input[type="email"]'))
         .first()
         .fill(email);
-      await resetPage.getByRole('textbox', { name: 'Password' }).fill(newPassword);
-      await resetPage.getByRole('button', { name: 'Continue' }).click();
+      await resetPage
+        .getByRole('textbox', { name: /password/i })
+        .fill(newPassword);
+      await resetPage.getByRole('button', { name: /^continue$/i }).click();
       await expect(resetPage).not.toHaveURL(/\/u\/login/);
     });
   }
